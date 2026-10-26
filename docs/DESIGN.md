@@ -1,6 +1,6 @@
 # Design notes
 
-The panel is an inspector for one session's Magic Context state, not a dashboard clone. The rules below are what the implementation follows; `design/` in the development checkout holds the full mock and screenshots, which are not published because they were generated from real local data.
+The panel is an inspector for one session's Magic Context state, not a dashboard clone. The rules below are what the implementation follows. The development checkout keeps a full mock and screenshot set; they are not published because they were generated from a real local database.
 
 ## One number per view
 
