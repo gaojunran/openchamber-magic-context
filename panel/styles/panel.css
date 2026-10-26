@@ -1,0 +1,1404 @@
+/* ==========================================================================
+   Magic Context panel — guest composition CSS.
+   Only what the kit does not draw: the panel shell, the reading layout, and
+   the content rows. Every colour is a host token; every control is a kit class.
+   ========================================================================== */
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-background);
+  color: var(--surface-foreground);
+  font-family: var(--font-sans);
+}
+
+/* The host writes 0.875rem on <html>; the kit's rem scale is authored for a
+   16px root. Without this line every kit text is 12.25px, not 14px. */
+html {
+  font-size: 16px !important;
+}
+
+.mc {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  container-type: inline-size;
+}
+
+/* The hidden attribute beats the layout display values above. */
+.mc [hidden] {
+  display: none !important;
+}
+
+/* ---- chrome: one row, ever ---------------------------------------------- */
+
+.mc-chrome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  height: 36px;
+  padding: 0 8px;
+}
+
+.mc-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mc-chrome-end {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-inline-start: auto;
+  flex: 0 0 auto;
+}
+
+/* Source + age. The word names where the numbers came from (rpc → Live,
+   session-meta → Last sample, none → Unavailable); the age comes from
+   observedAt and turns warning when the poll is not landing. */
+.mc-fresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--surface-muted-foreground);
+  white-space: nowrap;
+}
+
+.mc-fresh-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--status-success);
+  flex: 0 0 auto;
+}
+
+.mc-fresh-age {
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--surface-muted-foreground) 80%, transparent);
+}
+
+.mc-fresh[data-source="session-meta"] .mc-fresh-dot,
+.mc-fresh[data-stale="true"] .mc-fresh-dot {
+  background: var(--status-warning);
+}
+
+.mc-fresh[data-source="none"] .mc-fresh-dot {
+  background: color-mix(in srgb, var(--surface-muted-foreground) 45%, transparent);
+}
+
+.mc-fresh[data-source="session-meta"],
+.mc-fresh[data-stale="true"] {
+  color: var(--warning-text);
+}
+
+.mc-icon-btn {
+  width: 28px;
+  padding: 0;
+  flex: 0 0 auto;
+}
+
+.mc-back {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px 0 6px;
+  font-size: 0.8125rem;
+  color: var(--surface-muted-foreground);
+  border-radius: 7px;
+}
+
+.mc-back:hover {
+  color: var(--surface-foreground);
+  background: var(--interactive-hover);
+}
+
+.mc-back svg {
+  flex: 0 0 auto;
+}
+
+/* ---- body --------------------------------------------------------------- */
+
+.mc-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mc-banner-slot {
+  flex: 0 0 auto;
+  padding: 0 8px 8px;
+}
+
+.mc-banner {
+  padding: 7px 10px;
+  gap: 12px;
+}
+
+.mc-banner .oc-sdk-banner-text {
+  gap: 1px;
+}
+
+/* Narrow panel: the banner keeps its text only. The header's refresh button is
+   the same action and stays visible at every width, so nothing is lost here. */
+@container (max-width: 419.98px) {
+  .mc-banner .oc-sdk-banner-action {
+    display: none;
+  }
+}
+
+.mc-view {
+  display: none;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.mc-view[data-active="true"] {
+  display: flex;
+  flex-direction: column;
+}
+
+.mc-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* ---- typography primitives --------------------------------------------- */
+
+.mc-label {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--surface-muted-foreground);
+  white-space: nowrap;
+}
+
+.mc-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Shouting is an English convention; Chinese labels keep their own case. */
+.mc[lang="zh-CN"] .mc-label {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 0.75rem;
+}
+
+.mc[lang="zh-CN"] .mc-cat {
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.mc[lang="zh-CN"] .mc-condition-label {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 0.75rem;
+}
+
+/* ---- overview ----------------------------------------------------------- */
+
+.mc-overview {
+  padding: 10px 16px 20px;
+}
+
+.mc-overview-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.mc-sec {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.mc-sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mc-sec-note {
+  margin-inline-start: auto;
+  font-size: 0.75rem;
+  color: var(--surface-muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* hero: one number, one meter, one threshold */
+
+.mc-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.mc-hero-num {
+  flex: 0 0 auto;
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.mc-hero-unit {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: var(--surface-muted-foreground);
+  margin-inline-start: 1px;
+}
+
+.mc-meter {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 40px;
+  height: 8px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--surface-foreground) 8%, transparent);
+}
+
+.mc-meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+  transition: width 160ms ease-out;
+}
+
+.mc-meter--thin {
+  height: 3px;
+}
+
+/* The compaction trigger, drawn where it will happen. */
+.mc-meter-tick {
+  position: absolute;
+  top: -2px;
+  width: 1px;
+  height: 12px;
+  background: color-mix(in srgb, var(--surface-foreground) 34%, transparent);
+  border-radius: 1px;
+}
+
+.mc-meter-tick-void {
+  display: none;
+}
+
+/* composition */
+
+.mc-bd {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mc-bd-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  height: 24px;
+  font-size: 0.8125rem;
+  line-height: 24px;
+}
+
+/* The bar's three colours, reused as a 3px mark on every row, so a row can be
+   traced back to its segment without a legend. */
+.mc-bd-chip {
+  flex: 0 0 auto;
+  width: 3px;
+  height: 9px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--surface-foreground) 30%, transparent);
+  align-self: center;
+}
+
+.mc-bd-chip[data-band="conversation"] {
+  background: color-mix(in srgb, var(--surface-foreground) 62%, transparent);
+}
+
+.mc-bd-chip[data-band="system"] {
+  background: color-mix(in srgb, var(--surface-foreground) 20%, transparent);
+}
+
+.mc-bd-chip[data-band="context"] {
+  background: var(--primary);
+}
+
+.mc-bd-total .mc-bd-chip {
+  background: transparent;
+}
+
+/* A count of things beside a token figure: "6", "42 blocks". Small enough to
+   read as metadata, bordered enough not to merge with the label. */
+.mc-bd-count {
+  flex: 0 0 auto;
+  padding: 0 4px;
+  height: 14px;
+  line-height: 14px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--surface-muted-foreground);
+  background: color-mix(in srgb, var(--surface-foreground) 6%, transparent);
+  white-space: nowrap;
+}
+
+/* One row is a disclosure: same metrics, plus a caret that says there is more. */
+.mc-bd-group {
+  display: block;
+  height: auto;
+}
+
+.mc-bd-toggle {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+  height: 24px;
+  font-size: 0.8125rem;
+  line-height: 24px;
+  text-align: start;
+  color: inherit;
+  border-radius: 4px;
+}
+
+.mc-bd-toggle:hover .mc-bd-name {
+  color: var(--primary);
+}
+
+.mc-bd-caret {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-self: center;
+  color: var(--surface-muted-foreground);
+  transition: transform 120ms ease-out;
+}
+
+.mc-bd-toggle[aria-expanded="true"] .mc-bd-caret {
+  transform: rotate(90deg);
+}
+
+.mc-bd-sub {
+  list-style: none;
+  margin: 0 0 2px;
+  padding: 0 0 0 11px;
+  display: flex;
+  flex-direction: column;
+  border-inline-start: 1px solid color-mix(in srgb, var(--interactive-border) 70%, transparent);
+  margin-inline-start: 1px;
+}
+
+.mc-bd-sub li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  height: 22px;
+  font-size: 0.75rem;
+  line-height: 22px;
+}
+
+.mc-bd-subname {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--surface-muted-foreground);
+}
+
+
+/* One flexible spacer per row: the label cluster (name + badge) stays left, the
+   figures stay right, and a long label truncates instead of pushing the value. */
+.mc-bd-fill {
+  flex: 1 1 auto;
+  min-width: 4px;
+}
+
+.mc-bd-tok {
+  color: var(--surface-muted-foreground);
+  font-size: 0.75rem;
+}
+
+.mc-bd-sub .mc-bd-share {
+  font-size: 0.625rem;
+}
+
+.mc-bd-share {
+  flex: 0 0 auto;
+  width: 42px;
+  text-align: end;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.6875rem;
+  color: var(--surface-muted-foreground);
+}
+
+.mc-bd-total .mc-bd-share {
+  width: 42px;
+}
+
+.mc-bd-name {
+  flex: 0 0 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--surface-foreground);
+}
+
+.mc-bd-tok {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--surface-foreground);
+}
+
+.mc-bd-row[data-zero="true"] .mc-bd-name,
+.mc-bd-row[data-zero="true"] .mc-bd-tok {
+  color: color-mix(in srgb, var(--surface-muted-foreground) 62%, transparent);
+}
+
+/* A zero row states its zero once, in the value column. */
+.mc-bd-row[data-zero="true"] .mc-bd-chip,
+.mc-bd-row[data-zero="true"] .mc-bd-share {
+  visibility: hidden;
+}
+
+.mc-bd-total {
+  margin-top: 5px;
+  border-top: 1px solid color-mix(in srgb, var(--interactive-border) 85%, transparent);
+  font-weight: 500;
+}
+
+.mc-bd-total .mc-bd-name,
+.mc-bd-total .mc-bd-tok {
+  padding-top: 3px;
+}
+
+/* composition = one bar + one table, hidden together when the RPC is gone */
+.mc-comp {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* composition bar: full width of the section, 6px, no rounding on the inside */
+.mc-band {
+  display: flex;
+  height: 6px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface-foreground) 6%, transparent);
+}
+
+.mc-band-seg {
+  height: 100%;
+}
+
+.mc-band-seg[data-band="conversation"] {
+  background: color-mix(in srgb, var(--surface-foreground) 62%, transparent);
+}
+
+.mc-band-seg[data-band="system"] {
+  background: color-mix(in srgb, var(--surface-foreground) 26%, transparent);
+}
+
+.mc-band-seg[data-band="context"] {
+  background: var(--primary);
+}
+
+/* 1.5px of surface between segments, so the boundary reads at any width */
+.mc-band-seg + .mc-band-seg {
+  box-shadow: -1px 0 0 0 var(--surface-background);
+}
+
+.mc-context-share {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* cache */
+
+.mc-cache-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  font-size: 0.8125rem;
+}
+
+.mc-cache-left {
+  color: var(--surface-foreground);
+  font-size: 0.8125rem;
+}
+
+.mc-cache-cap {
+  font-size: 0.75rem;
+  color: var(--surface-muted-foreground);
+}
+
+.mc-cache-line .mc-meter {
+  margin-inline-start: 6px;
+  background: color-mix(in srgb, var(--surface-foreground) 6%, transparent);
+}
+
+/* A countdown is not a filling tank: the fill is what is left, so it shrinks,
+   and it stays monochrome so it never reads as a warning next to the accent. */
+.mc-cache-line .mc-meter-fill {
+  background: color-mix(in srgb, var(--surface-foreground) 34%, transparent);
+}
+
+/* count lines: label/value pairs, never a wall of equal numbers */
+
+.mc-stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  font-size: 0.75rem;
+  color: var(--surface-muted-foreground);
+}
+
+.mc-stats li {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mc-stats b {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  color: var(--surface-foreground);
+}
+
+/* "67 active · 11 archived": the numerals carry the weight, the qualifiers stay
+   in the muted 11px they belong to — a slash would read as a ratio. */
+.mc-stat-dim {
+  font-style: normal;
+  font-size: 0.6875rem;
+  color: var(--surface-muted-foreground);
+  margin-inline-start: -3px;
+}
+
+.mc-stat-sep {
+  color: color-mix(in srgb, var(--surface-muted-foreground) 55%, transparent);
+  margin-inline-start: 3px;
+}
+
+.mc-stats b[data-missing="true"] {
+  color: var(--surface-muted-foreground);
+  cursor: help;
+}
+
+.mc-inline-note {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--surface-muted-foreground);
+}
+
+.mc-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--surface-muted-foreground);
+}
+
+/* The compression-aware figure is the headline; the raw one is a remark next to
+   the same sentence, not a second hero number. */
+.mc-hero-cap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mc-hero-cap .mc-hint {
+  min-width: 0;
+}
+
+.mc-raw {
+  margin-inline-start: auto;
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--surface-muted-foreground);
+  white-space: nowrap;
+  cursor: help;
+}
+
+.mc-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 6px;
+  font-size: 0.6875rem;
+  color: var(--surface-muted-foreground);
+  min-width: 0;
+}
+
+.mc-foot .mc-mono {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mc-foot-sep {
+  color: color-mix(in srgb, var(--surface-muted-foreground) 55%, transparent);
+}
+
+/* ---- split views -------------------------------------------------------- */
+
+.mc-split {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mc-view.mc-split[data-active="true"] {
+  display: grid;
+}
+
+.mc-list-pane,
+.mc-detail-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mc-detail-pane {
+  background: var(--surface-background);
+}
+
+/* A list's chrome appears with the list: while the first read is in flight, on
+   an empty project, and after a failed read there is nothing to search. */
+.mc[data-state="loading"] .mc-filters,
+.mc[data-state="empty"] .mc-filters,
+.mc[data-state="error"] .mc-filters {
+  display: none;
+}
+
+/* filters */
+
+.mc-filters {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 4px 8px 8px;
+}
+
+.mc-filters .oc-sdk-search {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* the kit's compact field geometry, the same numbers its popup search uses */
+.mc-filters .oc-sdk-input {
+  height: 28px;
+  font-size: 0.8125rem;
+}
+
+.mc-filter-btn {
+  flex: 0 0 auto;
+  max-width: 50%;
+}
+
+.mc-popup {
+  position: absolute;
+  top: 34px;
+  inset-inline-end: 0;
+  width: 264px;
+  max-width: calc(100% - 16px);
+  z-index: 5;
+  gap: 10px;
+  padding: 10px;
+}
+
+.mc-chip-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.mc-chips .oc-sdk-btn {
+  max-width: 100%;
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+.mc-chip-count {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.62;
+}
+
+/* A chosen chip is a selection, not a call to action: it takes the same
+   treatment as a selected row. */
+.mc-chips .oc-sdk-btn[aria-pressed="true"] {
+  background: var(--interactive-selection);
+  color: var(--interactive-selection-foreground);
+  border-color: transparent;
+}
+
+.mc-filter-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 2px;
+  border-top: 1px solid color-mix(in srgb, var(--interactive-border) 60%, transparent);
+}
+
+.mc-filter-count {
+  font-size: 0.6875rem;
+  color: var(--surface-muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.mc-filter-foot .oc-sdk-btn {
+  margin-inline-start: auto;
+}
+
+/* list */
+
+.mc-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+}
+
+.mc-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 10px 8px;
+  border-radius: 6px;
+  text-align: start;
+  transition: background 120ms ease-out;
+}
+
+/* One hairline between rows, inset to the text column so it never touches the
+   scrollbar or the row's rounded corner. `:not([hidden])` keeps it away from
+   the top of the list after a filter hides the first row. */
+.mc-item:not([hidden]) + .mc-item:not([hidden])::before {
+  content: "";
+  position: absolute;
+  inset-inline: 8px;
+  top: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--surface-foreground) 12%, transparent);
+  pointer-events: none;
+}
+
+.mc-item:hover {
+  background: var(--interactive-hover);
+}
+
+/* The kit marks a focused option with its hover fill; a row list needs to tell
+   focus from hover and from selection, so a focused row also takes a hairline
+   inset ring. Selected rows keep their fill and gain the ring. */
+.mc-item:focus-visible {
+  background-image: linear-gradient(var(--interactive-hover), var(--interactive-hover));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--surface-foreground) 26%, transparent);
+}
+
+.mc-item[aria-selected="true"]:focus-visible {
+  background-image: none;
+}
+
+.mc-item[aria-selected="true"] {
+  background: var(--interactive-selection);
+  color: var(--interactive-selection-foreground);
+}
+
+.mc-item[aria-selected="true"] .mc-meta,
+.mc-item[aria-selected="true"] .mc-imp {
+  color: inherit;
+  opacity: 0.72;
+}
+
+.mc-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 16px;
+  font-size: 0.6875rem;
+  line-height: 16px;
+  color: var(--surface-muted-foreground);
+}
+
+.mc-cat {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mc-dotsep {
+  flex: 0 0 auto;
+  width: 2px;
+  height: 2px;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.mc-age {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.mc-imp {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  padding-inline-start: 6px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  color: var(--surface-muted-foreground);
+}
+
+.mc-badge {
+  flex: 0 0 auto;
+}
+
+.mc-text {
+  margin-top: 1px;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.mc-text code,
+.mc-content code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  padding: 0.5px 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--surface-foreground) 6%, transparent);
+}
+
+/* list footer: paging, and the one number that says how much is here */
+
+.mc-list-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px 14px;
+  min-height: 34px;
+}
+
+.mc-loadmore {
+  margin-inline-start: -6px;
+}
+
+.mc-list-count {
+  margin-inline-start: auto;
+  font-size: 0.6875rem;
+  color: var(--surface-muted-foreground);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mc-group + .mc-group {
+  margin-top: 16px;
+}
+
+/* Notes are blocks, not a continuous list: a 14px gap whose centre carries the
+   hairline, so the eye reads three levels — section label, note, meta line. */
+.mc-view[data-view="notes"] .mc-item:not([hidden]) + .mc-item:not([hidden]) {
+  margin-top: 14px;
+}
+
+.mc-view[data-view="notes"] .mc-item:not([hidden]) + .mc-item:not([hidden])::before {
+  top: -7px;
+}
+
+/* "Show 9 dismissed notes": a quiet disclosure where the extra rows appear,
+   never a header filter — the rows themselves are the destination. */
+.mc-reveal {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 8px 0;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: var(--surface-muted-foreground);
+  text-align: start;
+  transition: background 120ms ease-out;
+}
+
+.mc-reveal:hover {
+  background: var(--interactive-hover);
+  color: var(--surface-foreground);
+}
+
+.mc-reveal::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-inline-start: 4px solid currentColor;
+  border-block: 3.5px solid transparent;
+  transition: transform 120ms ease-out;
+}
+
+.mc-reveal[aria-expanded="true"]::before {
+  transform: rotate(90deg);
+  transform-origin: 25% 50%;
+}
+
+/* Dismissed rows keep their text but lose their weight: the badge says what they
+   are and the reading colour recedes, so they never pass for current. No opacity
+   here — a dimmed layer would also dim the badge and the focus ring. */
+.mc-list--muted .mc-text {
+  color: var(--surface-muted-foreground);
+}
+
+.mc-list--muted .mc-meta .mc-age,
+.mc-list--muted .mc-imp {
+  color: color-mix(in srgb, var(--surface-muted-foreground) 72%, transparent);
+}
+
+.mc-list--muted .mc-item[aria-selected="true"] {
+  background: var(--interactive-selection);
+}
+
+.mc-list--muted .mc-item[aria-selected="true"] .mc-text {
+  color: var(--interactive-selection-foreground);
+}
+
+.mc-group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  /* The rule spans the text column exactly: [16, width - 16], the same
+     extent as the row hairlines, so label / row / meta share one axis. */
+  margin: 0 16px 6px;
+  padding: 8px 0 6px;
+  min-width: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--surface-foreground) 12%, transparent);
+}
+
+.mc-group-count {
+  font-size: 0.6875rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--surface-muted-foreground);
+}
+
+.mc-group-dim {
+  margin-inline-start: auto;
+  font-size: 0.6875rem;
+  color: var(--surface-muted-foreground);
+  white-space: nowrap;
+}
+
+.mc-inline-empty {
+  margin: 0;
+  padding: 4px 16px 8px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--surface-muted-foreground);
+}
+
+/* ---- detail ------------------------------------------------------------- */
+
+.mc-detail-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.mc-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px 0;
+}
+
+.mc-detail-head .mc-label {
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mc-detail-id {
+  margin-inline-start: auto;
+  font-size: 0.6875rem;
+  color: var(--surface-muted-foreground);
+  white-space: nowrap;
+}
+
+.mc-detail-inner {
+  padding: 10px 16px 24px;
+  max-width: 68ch;
+}
+
+.mc-h {
+  display: inline;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.mc-content {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.mc-detail .oc-sdk-separator,
+.mc-detail-pane .oc-sdk-separator {
+  margin: 16px 0 10px;
+}
+
+.mc-prov {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 14px;
+  row-gap: 3px;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.mc-prov dt {
+  color: var(--surface-muted-foreground);
+  white-space: nowrap;
+}
+
+.mc-prov dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mc-prov dd.mc-mono {
+  font-size: 0.6875rem;
+}
+
+/* Ids never wrap: a mid-token break is noise, and the start is what identifies them. */
+.mc-prov dd.mc-id {
+  font-size: 0.6875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mc-condition {
+  margin: 0 0 14px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: var(--surface-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mc-condition-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--surface-muted-foreground);
+}
+
+.mc-condition-body {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--surface-foreground);
+}
+
+/* ---- empty / error / loading ------------------------------------------- */
+
+.mc-state {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.mc-state--center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.mc-skel {
+  display: block;
+  height: 10px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--surface-foreground) 8%, transparent);
+  animation: mc-blink 2s steps(1, end) infinite;
+}
+
+.mc-skel[data-h="8"] { height: 8px; }
+.mc-skel[data-h="12"] { height: 12px; }
+.mc-skel[data-h="32"] { height: 32px; }
+
+@keyframes mc-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.mc-skeleton {
+  padding: 8px 16px 20px;
+}
+
+.mc-skeleton .mc-overview-inner {
+  gap: 24px;
+}
+
+.mc-skeleton-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 10px;
+}
+
+.mc-skeleton-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mc-skeleton-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mc-detail-skeleton {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 60ch;
+}
+
+/* ---- responsive --------------------------------------------------------- */
+
+@container (max-width: 479.98px) {
+  .mc-updated {
+    display: none;
+  }
+
+  /* The composition note is the section's thesis ("Magic Context 9,830 · 7.9%").
+     Truncating it would hide the number; give it its own line instead. */
+  .mc-sec[data-area="bd"] .mc-sec-head {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .mc-sec[data-area="bd"] .mc-sec-note {
+    width: 100%;
+    margin-inline-start: 0;
+  }
+
+  /* The compaction sentence wraps to two lines at this width; the raw figure
+     drops under it rather than sitting on the first line's baseline. */
+  .mc-hero-cap {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .mc-raw {
+    margin-inline-start: 0;
+  }
+}
+
+@container (max-width: 349.98px) {
+  .oc-sdk-tab-count {
+    display: none;
+  }
+}
+
+/* compact: one pane at a time, the tab strip becomes a back button */
+@container (max-width: 599.98px) {
+  .mc[data-pane="list"] .mc-detail-pane {
+    display: none;
+  }
+  .mc[data-pane="detail"] .mc-list-pane {
+    display: none;
+  }
+  .mc[data-pane="detail"] .mc-tabs {
+    display: none;
+  }
+  .mc[data-pane="detail"] .mc-back {
+    display: inline-flex;
+  }
+  .mc-detail-inner {
+    padding-top: 8px;
+  }
+}
+
+/* wide: master-detail, and an overview that reads in two columns */
+@container (min-width: 600px) {
+  .mc-split {
+    grid-template-columns: clamp(232px, 36%, 300px) minmax(0, 1fr);
+  }
+  .mc-detail-pane {
+    border-inline-start: 1px solid color-mix(in srgb, var(--interactive-border) 75%, transparent);
+  }
+  .mc-detail-head {
+    padding-top: 16px;
+  }
+}
+
+@container (min-width: 720px) {
+  .mc-overview {
+    padding-inline: 20px;
+  }
+  .mc-overview-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "hero bd"
+      "cache bd"
+      "session bd"
+      "project bd";
+    column-gap: 36px;
+    row-gap: 26px;
+    align-items: start;
+  }
+  /* One table per column: the numbers keep a readable measure instead of
+     drifting to the far edge of a wide panel. */
+  .mc-overview-inner > [data-area="bd"] .mc-bd,
+  .mc-overview-inner > [data-area="bd"] .mc-band {
+    max-width: 340px;
+  }
+  .mc-bd-row {
+    height: 26px;
+    line-height: 26px;
+  }
+  .mc-overview-inner > .mc-sec--hero { grid-area: hero; }
+  .mc-overview-inner > [data-area="bd"] { grid-area: bd; }
+  .mc-overview-inner > [data-area="cache"] { grid-area: cache; }
+  .mc-overview-inner > [data-area="session"] { grid-area: session; }
+  .mc-overview-inner > [data-area="project"] { grid-area: project; }
+  /* Identity belongs to the whole panel, not to the left column. */
+  .mc-overview-inner > .mc-foot {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mc-item,
+  .mc-meter-fill,
+  .oc-sdk-tab {
+    transition: none;
+  }
+  .mc-skel {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Split mode: the master column is 232–300px. The filter trigger keeps its icon
+   and gives up its label there, so the search field keeps its placeholder; when
+   a filter is on, the icon turns primary and the accessible name spells it out.
+   ------------------------------------------------------------------------- */
+@container (min-width: 600px) {
+  .mc-filter-btn {
+    width: 28px;
+    padding-inline: 0;
+    justify-content: center;
+    gap: 0;
+    max-width: none;
+  }
+
+  .mc-filter-btn .oc-sdk-trigger-value,
+  .mc-filter-btn .oc-sdk-trigger-chevron {
+    display: none;
+  }
+
+  .mc-filter-btn[data-active="true"] .mc-filter-icon {
+    color: var(--primary);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Below 420 the tab strip and the freshness cluster cannot share a row: three
+   labels plus a source word plus a refresh control need 320px that don't exist.
+   The strip takes its own row (all three views stay visible, nothing scrolls
+   horizontally) and the cluster keeps the second row, right-aligned.
+   ------------------------------------------------------------------------- */
+@container (max-width: 419.98px) {
+  .mc-chrome {
+    flex-wrap: wrap;
+    height: auto;
+    padding-block: 4px 5px;
+    row-gap: 2px;
+  }
+
+  .mc-tabs {
+    flex: 1 1 100%;
+    overflow: visible;
+  }
+
+  /* Section heads wrap the note instead of ellipsizing a figure. */
+  .mc-sec-head {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .mc-sec-note {
+    flex: 1 1 100%;
+    margin-inline-start: 0;
+    white-space: normal;
+  }
+}

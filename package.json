@@ -1,0 +1,46 @@
+{
+  "name": "openchamber-magic-context",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A Magic Context sidebar panel for OpenChamber",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gaojunran/openchamber-magic-context"
+  },
+  "scripts": {
+    "build": "bun run build:panel && bun run build:service",
+    "build:panel": "vite build",
+    "build:service": "bun build service/main.ts --target=node --format=esm --outfile=service/main.js",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@openchamber/sdk": "^2.5.2",
+    "@solidjs/web": "2.0.0-rc.18",
+    "@types/node": "22.18.0",
+    "babel-preset-solid": "2.0.0-rc.2",
+    "solid-js": "2.0.0-rc.18",
+    "typescript": "5.9.2",
+    "vite": "8.3.5",
+    "vite-plugin-solid": "3.0.0-next.27"
+  },
+  "openchamber": {
+    "apiVersion": 1,
+    "engines": {
+      "openchamber": ">=2.5.0"
+    },
+    "contributes": {
+      "panel": {
+        "id": "magic-context",
+        "name": "Magic Context",
+        "icon": "brain",
+        "entry": "panel/index.html"
+      },
+      "service": {
+        "entry": "service/main.js",
+        "runtime": "host"
+      }
+    }
+  }
+}

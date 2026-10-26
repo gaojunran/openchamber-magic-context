@@ -1,0 +1,33 @@
+#root {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.mc-search-host {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mc-search-host .oc-sdk-search {
+  width: 100%;
+}
+
+.mc-search-host .oc-sdk-input {
+  height: 28px;
+  font-size: 0.8125rem;
+}
+
+.mc-tabs {
+  min-width: 0;
+}
+
+.mc-list-foot .mc-list-count {
+  margin-inline-start: auto;
+}
+
+.mc-state {
+  flex: 1 1 auto;
+  min-height: 0;
+}
